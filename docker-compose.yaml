@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis_channels
+ 
+  backend: &backend
+    container_name: django_channels
+    command : bash -c "python manage.py makemigrations & python manage.py migrate & python manage.py runserver 0.0.0.0:8000"
+    build:
+      context: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+
+  frontend:
+    container_name: react_channels
+    build: 
+      context: ./frontend
+    volumes:
+      - ./frontend:/react
+      - '/react/node_modules'
+    ports:
+      - "3000:3000"
+    command: npm start
+    depends_on:
+      - backend
+
+  images: 
+    container_name: django_channels_images
+    command : bash -c "python manage.py makemigrations & python manage.py migrate & python manage.py runserver 0.0.0.0:8001"
+    build:
+      context: ./image_service
+    volumes:
+      - ./image_service:/app
+    ports:
+      - 8001:8001
+
+  # celery:
+  #   <<: *backend
+  #   container_name: celery_channels
+  #   ports: []
+  #   command: bash -c "celery -A main beat & celery -A main worker"
+  #   depends_on:
+  #     - redis
+  #     - backend

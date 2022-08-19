@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block body %}
+<div>
+    <div class="form-header border-bottom pb-2 my-3 fg-white">Successfully Logout</div>
+    <small class="text-muted">
+        <a href="{% url 'login' %}">Zaloguj się ponowne</a>
+    </small>
+</div>
+{% endblock body %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <div class="form-header border-bottom pb-2 mb-4">Login Form</div>
+            {{ form }}
+            <div>
+                <button type="submit">Zaloguj się</button>
+            </div>
+        </fieldset>
+    </form>
+
+{% endblock body %}

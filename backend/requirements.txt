@@ -1,0 +1,9 @@
+Django
+Pillow==9.2.0
+djangorestframework
+redis
+channels
+channels-redis==3.4.0
+celery
+requests
+django-cors-headers

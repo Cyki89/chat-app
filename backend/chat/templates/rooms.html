@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+<div class="container text-center mt-5">
+  <h1>Chat Rooms</h1>
+  <form id="chat-form">
+    What chat room would you like to enter?<br>
+    <input id="room-name" type="text" size="100"><br>
+    <button type="submit">Enter</button>
+  </form>
+  <div id="messages"></div>
+</div>
+{% endblock body %}
+
+{% block scripts %}
+  <script src="{% static 'rooms.js' %}"></script>
+{% endblock scripts %}
