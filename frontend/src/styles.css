@@ -57,13 +57,18 @@ a:hover{
   color: var(--brand);
 }
 
+.bg-secondary {
+  background-color: var(--bg-secondary) !important;
+}
+
 .bg-third {
   background-color: var(--bg-third) !important;
 }
 
 .bg-light-black{
-  background-color: var(--black-light);
+  background-color: var(--black-light) !important;
 }
+
 .fs-11{
   font-size: 1.1rem;
 }
@@ -92,6 +97,10 @@ a:hover{
 
 .ml-2 {
   margin-left: 0.5em;
+}
+
+.clickable {
+  cursor: pointer;
 }
 
 /* Navbar */
@@ -154,15 +163,17 @@ a:hover{
   font-size: 1.2rem !important;
   border: 1px solid var(--bg-forth);
   min-width: 16em;
-  /* max-width: 28em; */
+  background-repeat: no-repeat;
 }
 
 .form-input:focus {
   border: 1px solid var(--bg-forth);
+  background-repeat: no-repeat;
 }
 
 .form-input:hover, .form-input:focus{
   background: var(--bg-primary);
+  background-repeat: no-repeat;
 }
 
 .form-header {
@@ -274,21 +285,74 @@ a:hover{
   background-color: var(--brand-hover);
 }
 
-/* Chat */
-.message-container{
-  width: 60%;
-  padding-inline: 1em;
-  border: 1.5px dotted var(--bg-forth);
-  border-radius: 0.2em;
-  margin-bottom: 2em;
-
+.btn-chat {
+  background-color: var(--black-light);
+  font-size: 1.1rem;
 }
 
-.message-author{
-  justify-content: flex-start;
+.btn-chat:hover, .btn-chat:focus, .btn-chat:disabled {
+  background-color: var(--black);
+}
+
+/* Chat */
+.chat-window-container {
+  border: 1.5px solid var(--black-light);
+  border-radius: 0.25em;
+  margin-block: 1em;
+  overflow: hidden;
+}
+
+.chat-title {
+  padding: 0;
+  margin: 0;
+  background-color: var(--black-light);
+  position: relative
+}
+
+.btn-show-chats {
+  position: absolute;
+  top: 0px;
+  left: 10px;
+  color: var(--white);
+  cursor: pointer;
+}
+
+.btn-show-chats:hover, .btn-show-chats:focus, .btn-show-chats:active {
+  color: var(--white-hover);
+}
+
+.message-container,
+.chat-sidebar {
+  height: 80vh;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.chat-sidebar{
+  align-items: center;
+}
+
+.message-container-messages,
+.chat-sidebar-contacts {
+  overflow-y: auto;
+  padding-inline: 1em;
+} 
+
+.chat-sidebar-buttons,
+.btn-chat-toggle-window
+ {
+  display: flex;
+  flex-direction: column;
+  padding-inline: 1em;
+  width:100%;
 }
 
 .message-other{
+  justify-content: flex-start;
+}
+
+.message-author{
   justify-content: flex-end;
 }
 
@@ -301,8 +365,14 @@ a:hover{
 .card.message-body {
   border: 1px solid var(--bg-secondary);
   min-height: var(--avatar-size);
+  color: var(--fg-primary);
 }
 
 .message-info{
   color: var(--fg-secondary);
+}
+
+.message-info-title {
+  color: var(--white);
+  font-weight: bold;
 }

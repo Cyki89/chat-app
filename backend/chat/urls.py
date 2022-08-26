@@ -1,7 +1,8 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from . import views
 
-urlpatterns = [
-    path('', views.select_room, name='chat'),
-    path('<str:room_name>/', views.room, name='room'),
-]
+
+router = DefaultRouter()
+router.register(r'api', views.ChatRoomViewSet, basename='chats')
+urlpatterns = router.urls

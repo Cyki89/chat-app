@@ -25,6 +25,10 @@ const useWebsocket = (user, uuid) => {
     }
   }, []);
 
+  // const onClose = useCallback(() => {
+  //   console.log("Unexpected clossing ...");
+  // }, []);
+
   const onError = useCallback(() => {
     setError("Unexpected error occurs. Try again in a moment.");
   }, []);
@@ -42,13 +46,14 @@ const useWebsocket = (user, uuid) => {
     webSocketRef.current.onopen = onOpen;
     webSocketRef.current.onmessage = onMessage;
     webSocketRef.current.onerror = onError;
+    // webSocketRef.current.onclose = onClose;
   }, [uuid]);
 
   const sendMessage = (rawMessage) => {
     const message = rawMessage.trim();
     if (!message) return;
 
-    // if (webSocketRef.current.readyState !== 1) return;
+    if (webSocketRef.current.readyState !== 1) return;
 
     webSocketRef.current.send(
       JSON.stringify({
@@ -61,7 +66,7 @@ const useWebsocket = (user, uuid) => {
   };
 
   const fetchNewMessages = () => {
-    // if (webSocketRef.current.readyState !== 1) return;
+    if (webSocketRef.current.readyState !== 1) return;
     webSocketRef.current.send(
       JSON.stringify({
         type: "fetch_messages",

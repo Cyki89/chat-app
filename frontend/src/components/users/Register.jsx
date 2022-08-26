@@ -33,7 +33,7 @@ const Register = () => {
         username: "",
         password: "",
         confirm_password: "",
-        image: null,
+        image: "",
       }}
       formTitle={"Register Form"}
       submitBtnTitle={"Register"}

@@ -8,7 +8,6 @@ const useAxiosPrivate = () => {
   useEffect(() => {
     const requestIntercept = axiosPrivate.interceptors.request.use(
       async (request) => {
-        request.headers["Content-Type"] = "multipart/form-data";
         request.headers["X-CSRFToken"] = csrf;
         return request;
       },

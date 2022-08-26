@@ -13,8 +13,9 @@ import PersistLogin from "../functional/PersistLogin";
 import ProtectedRoute from "../functional/ProtectedRoute";
 import OnlyUnauthRoute from "../functional/OnlyUnauthRoute";
 
-import SelectChatRoom from "../chat/SelectChatRoom";
-import ChatRoom from "../chat/ChatRoom";
+import Chat from "./../chat/Chat";
+import BlankChatWindow from "../chat/BlankChatWindow";
+import ChatWindow from "../chat/ChatWindow";
 
 import Login from "../users/Login";
 import Logout from "../users/Logout";
@@ -30,8 +31,10 @@ const Router = () => {
             <Route path="register" element={<Register />} />
           </Route>
           <Route path="chat" element={<ProtectedRoute />}>
-            <Route path="" element={<SelectChatRoom />} />
-            <Route path=":name" element={<ChatRoom />} />
+            <Route path="" element={<Chat />}>
+              <Route path="" element={<BlankChatWindow />} />
+              <Route path=":uuid" element={<ChatWindow />} />
+            </Route>
           </Route>
           <Route path="" element={<Home />} />
           <Route path="authenticated" element={<Authenticated />} />

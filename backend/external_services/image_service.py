@@ -5,6 +5,7 @@ import requests
 from rest_framework import status
 
 
+BASE_URL = "http://127.0.0.1:8001"
 BASE_URL = "http://images:8001"
 
 

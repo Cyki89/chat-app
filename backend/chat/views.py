@@ -1,12 +1,13 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
 
+from .serializers import ChatRoomSerializer
+from .paginations import ChatCursorPagination
 
-@login_required
-def select_room(request):
-    return render(request, 'rooms.html')
+class ChatRoomViewSet(ModelViewSet):
+    serializer_class = ChatRoomSerializer
+    permission_classes = (IsAuthenticated, )
+    pagination_class = ChatCursorPagination 
 
-
-@login_required
-def room(request, room_name):
-    return render(request, 'room.html', {'room_name': room_name})
+    def get_queryset(self):
+        return self.request.user.chats.prefetch_related("participants")

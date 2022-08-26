@@ -7,3 +7,4 @@ channels-redis==3.4.0
 celery
 requests
 django-cors-headers
+django-debug-toolbar

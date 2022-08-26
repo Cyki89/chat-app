@@ -1,37 +1,39 @@
 import { forwardRef } from "react";
 import Form from "react-bootstrap/Form";
 
-const Input = (
+const Select = (
   {
     title,
     name,
     value,
     setValue,
-    placeholder,
-    type = "text",
+    options,
+    optionName,
+    placeholder = "-------",
     style = {},
     error,
     ...rest
   },
   ref
 ) => {
-  const valueProps =
-    type === "file" ? { defaultValue: value } : { value: value };
-
   return (
     <Form.Group className={!error ? "mb-3" : ""} style={style}>
       <Form.Label>{title}</Form.Label>
-      <Form.Control
+      <Form.Select
         name={name}
         ref={ref}
+        value={value}
         onChange={setValue}
-        {...valueProps}
-        className="form-input"
-        placeholder={placeholder}
-        type={type}
+        className="form-control form-input"
         isInvalid={error}
-        {...rest}
-      />
+        {...rest}>
+        <option>{placeholder}</option>
+        {options.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option[optionName]}
+          </option>
+        ))}
+      </Form.Select>
       <Form.Control.Feedback type="invalid" className="text-center">
         {error}
       </Form.Control.Feedback>
@@ -39,4 +41,4 @@ const Input = (
   );
 };
 
-export default forwardRef(Input);
+export default forwardRef(Select);

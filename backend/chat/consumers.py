@@ -1,17 +1,23 @@
 import json
 from asgiref.sync import async_to_sync
 
-from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
-from django.contrib.auth.models import User
-from channels.auth import login
+from django.core.exceptions import PermissionDenied
+from channels.generic.websocket import WebsocketConsumer
+
 from .models import ChatRoom, Message
+
+MESSAGES_TO_FETCH = 10
 
 
 class ChatRoomConsumer(WebsocketConsumer):
     def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
-        self.chat_room = ChatRoom.objects.get_or_create(name=self.room_group_name)[0]
+        self.room_uuid = self.scope['url_route']['kwargs']['uuid']
+        self.room_group_name = 'chat_%s' % self.room_uuid
+        self.chat_room = ChatRoom.objects.get(uuid=self.room_uuid)
+        self.user = self.scope['user']
+        
+        if not self.chat_room.participants.filter(id=self.user.id).exists():
+            raise PermissionDenied()
         
         async_to_sync(self.channel_layer.group_add)(
             self.room_group_name,
@@ -19,15 +25,6 @@ class ChatRoomConsumer(WebsocketConsumer):
         )
 
         self.accept()
-
-        self.fetch_messages()
-
-    def fetch_messages(self):
-        messages = Message.objects.filter(room=self.chat_room)
-        self.send(text_data=json.dumps({
-            'type': 'fetch_messages',
-            'messages': [message.to_json() for message in messages]
-        }))
 
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
@@ -37,17 +34,26 @@ class ChatRoomConsumer(WebsocketConsumer):
 
     def receive(self, text_data=None, bytes_data=None):
         text_data_json = json.loads(text_data)
+        message_type = text_data_json['type']
+        payload = text_data_json['payload']
+        
+        if message_type == 'chat_message':    
+            message = Message.objects.create(
+                message=payload['message'],
+                user_id=payload['user_id'],
+                room=self.chat_room
+            )
 
-        message = Message.objects.create(
-            message=text_data_json['message'],
-            user_id=text_data_json['user_id'],
-            room=self.chat_room
-        )
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {'type': 'chat_message', 'message': message.to_json()}
+            )
 
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name,
-            {'type': 'chat_message', 'message': message.to_json()}
-        )
+        if message_type == 'fetch_messages':
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {'type': 'fetch_messages', 'offset': payload['offset']}
+            )
 
     def chat_message(self, event):
         self.send(text_data=json.dumps({
@@ -55,44 +61,11 @@ class ChatRoomConsumer(WebsocketConsumer):
             'message': event['message']
         }))
 
-# class ChatRoomConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         print(self.scope['url'])
-#         self.room_name = self.scope['url_route']['kwargs']['room_name']
-#         self.room_group_name = 'chat_%s' % self.room_name
-        
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#         await self.accept()
-
-#     async def disconnect(self, close_code):
-#         message = f'User {self.channel_name} go out from chat'
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {'type': 'chat_message','message': message}
-#         )
-
-#         await self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-
-#     async def receive(self, text_data=None, bytes_data=None):
-#         text_data_json = json.loads(text_data)
-#         message = text_data_json['message']
-
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {'type': 'chat_message','message': message}
-#         )
-
-#     async def chat_message(self, event):
-#         message = event['message']
-#         await self.send(text_data=json.dumps({
-#             'type': 'group_message',
-#             'message': message
-#         }))
-
+    def fetch_messages(self, event):
+        offset = event['offset']
+        messages = Message.objects.filter(room=self.chat_room)[offset: offset + MESSAGES_TO_FETCH]
+        self.send(text_data=json.dumps({
+            'type': 'fetch_messages',
+            'messages': [message.to_json() for message in messages][::-1],
+            'has_next': bool(len(messages) == MESSAGES_TO_FETCH)
+        }))
