@@ -21,6 +21,8 @@ import Login from "../users/Login";
 import Logout from "../users/Logout";
 import Register from "../users/Register";
 
+import { ChatsProvider } from "../../context/ChatsContext";
+
 const Router = () => {
   return (
     <Routes>
@@ -30,8 +32,15 @@ const Router = () => {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
           </Route>
+
           <Route path="chat" element={<ProtectedRoute />}>
-            <Route path="" element={<Chat />}>
+            <Route
+              path=""
+              element={
+                <ChatsProvider>
+                  <Chat />
+                </ChatsProvider>
+              }>
               <Route path="" element={<BlankChatWindow />} />
               <Route path=":uuid" element={<ChatWindow />} />
             </Route>

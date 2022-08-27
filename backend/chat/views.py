@@ -10,4 +10,4 @@ class ChatRoomViewSet(ModelViewSet):
     pagination_class = ChatCursorPagination 
 
     def get_queryset(self):
-        return self.request.user.chats.prefetch_related("participants")
+        return self.request.user.chats.select_related("last_message__user").prefetch_related("participants__profile")

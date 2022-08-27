@@ -7,10 +7,20 @@ from django.contrib.auth.models import User
 
 class ChatRoom(models.Model):
     uuid = models.UUIDField(default=uuid4)
-    date_created = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, blank=True, null=True)
+    
     # TODO Add Unique constraint for manyToMany
     participants = models.ManyToManyField(User, related_name='chats')
+    
+    # TODO set last message on delete event
+    last_message = models.ForeignKey(
+        to='Message', 
+        null=True, 
+        blank=True,
+        related_name='+',
+        on_delete=models.PROTECT
+    )
     is_group_chat = models.BooleanField(default=False)
 
 
