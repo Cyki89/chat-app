@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+from .utils import timestamp_representation
+
 
 class ChatRoom(models.Model):
     uuid = models.UUIDField(default=uuid4)
@@ -22,6 +24,9 @@ class ChatRoom(models.Model):
         on_delete=models.PROTECT
     )
     is_group_chat = models.BooleanField(default=False)
+
+    # class Meta:
+    #     ordering = ("-timestamp", )
 
 
 class Message(models.Model):
@@ -47,7 +52,7 @@ class Message(models.Model):
             "author_id": self.user.id,
             "author": self.user.username,
             "author_profile_image": self.user.profile.image_url,
-            "timestamp": self.date_added.strftime("%Y/%m/%d %H:%M:%S"),
+            "timestamp": timestamp_representation(self.date_added),
             "body": self.message
         }
 

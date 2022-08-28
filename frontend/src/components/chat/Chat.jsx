@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
 
 import useMediaQuery from "../../hooks/useMediaQuery";
 import useEffectOnce from "./../../hooks/useEffectOnce";
@@ -8,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 import ChatSideBar from "./ChatSideBar";
+import ChatWindow from "./ChatWindow";
 
 const Chat = () => {
   const [sidePanelVisible, setSidePanelVisible] = useState(false);
@@ -33,7 +33,7 @@ const Chat = () => {
       )}
       {(isLargeScreen || !sidePanelVisible) && (
         <Col md={{ order: 2, span: 7 }} lg={8}>
-          <Outlet context={{ showSidePanel }} />
+          <ChatWindow showSidePanel={showSidePanel} />
         </Col>
       )}
     </Row>

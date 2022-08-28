@@ -17,13 +17,13 @@ def timestamp_representation(timestamp):
     if time_diff < ONE_MINUTE: 
         return 'a moment ago'
     if time_diff <= ONE_HOUR:
-        return f'{time_diff // ONE_MINUTE} minutes ago'
+        return f'{time_diff // ONE_MINUTE} minute[s] ago'
     if time_diff <= ONE_DAY:
-        return f'{time_diff // ONE_HOUR} hours ago'
+        return f'{time_diff // ONE_HOUR} hour[s] ago'
     if time_diff <= ONE_WEEK:
-        return f'{time_diff // ONE_DAY} days ago'
+        return f'{time_diff // ONE_DAY} day[s] ago'
     if time_diff <= ONE_MONTH:
-        return f'{time_diff // ONE_WEEK} weeks ago'
+        return f'{time_diff // ONE_WEEK} week[s] ago'
     if time_diff <= ONE_YEAR:
         return timestamp.strftime('%m/%d')
     return timestamp.strftime('%Y/%m/%d')

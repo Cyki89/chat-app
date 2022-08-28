@@ -30,10 +30,10 @@ const ChatThumbnail = ({ chat, user }) => {
       <img className="message-avatar" src={chatAvatar()} alt="" />
       <Card bg="dark" className="message-body w-100 bg-light-black my-2 p-2">
         <div className="message-info mb-1">
-          <span className="message-info-title">{chatName()}</span>{" "}
-          {chat.timestamp}
+          <div className="message-info-title">{chatName()}</div>
+          <div>{chat.timestamp}</div>
         </div>
-        <div>
+        <div className="fs-11">
           <span className="fw-bold">{lastMessageAuthor()}: </span>
           {chat.last_message.message}
         </div>

@@ -18,7 +18,7 @@ class ChatLastMessageSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField()
     class Meta:
         model = Message
-        fields = ['id', 'message', 'user']
+        fields = ['message', 'user']
         read_only_fields = ['message', 'user']    
 
 
@@ -67,3 +67,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         rep["participants"] = ChatUserSerializer(instance.participants.all(), many=True).data
         rep["last_message"] = ChatLastMessageSerializer(instance.last_message).data
         return rep
+
+
+class AttachementSerialzer(serializers.ModelSerializer):
+    ...

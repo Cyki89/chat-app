@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback } from "react";
 
+import { useChatsContext } from "../../context/ChatsContext";
 import useEffectOnce from "../useEffectOnce";
 
 const SERVER_HOST = "127.0.0.1:8000";
 
 const useWebsocket = (user, uuid) => {
+  const { updateChat } = useChatsContext();
   const [error, setError] = useState(false);
   const [hasNext, setHasNext] = useState(true);
   const [messages, setMessages] = useState([]);
@@ -14,22 +16,27 @@ const useWebsocket = (user, uuid) => {
     fetchNewMessages();
   }, []);
 
-  const onMessage = useCallback((e) => {
-    const data = JSON.parse(e.data);
-    if (data.type === "fetch_messages") {
-      setHasNext(data["has_next"]);
-      setMessages((prevState) => [...data.messages, ...prevState]);
-    }
-    if (data.type === "group_message") {
-      setMessages((prevState) => [...prevState, data.message]);
-    }
-  }, []);
+  const onMessage = useCallback(
+    (e) => {
+      const data = JSON.parse(e.data);
+      if (data.type === "fetch_messages") {
+        setHasNext(data["has_next"]);
+        setMessages((prevState) => [...data.messages, ...prevState]);
+      }
+      if (data.type === "group_message") {
+        setMessages((prevState) => [...prevState, data.message]);
+        updateChat(uuid, data.message);
+      }
+    },
+    [uuid]
+  );
 
   const onError = useCallback(() => {
     setError("Unexpected error occurs. Try again in a moment.");
   }, []);
 
   useEffectOnce(() => {
+    if (!uuid) return;
     if (webSocketRef.current) {
       setMessages([]);
       webSocketRef.current.close();

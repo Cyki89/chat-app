@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from asgiref.sync import async_to_sync
 
 from django.core.exceptions import PermissionDenied
@@ -43,6 +44,8 @@ class ChatRoomConsumer(WebsocketConsumer):
                 user_id=payload['user_id'],
                 room=self.chat_room
             )
+            ChatRoom.objects.filter(uuid=self.room_uuid)\
+                            .update(last_message=message, timestamp=datetime.now())
 
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,

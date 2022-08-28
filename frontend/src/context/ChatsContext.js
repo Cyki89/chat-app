@@ -1,14 +1,25 @@
-import { createContext, useState } from "react";
-import { useContext } from "react";
+import { createContext, useState, useContext } from "react";
 
 const ChatsContext = createContext();
 
 export const ChatsProvider = ({ children }) => {
-  const [chats, setChats] = useState([]);
+  const [localChats, setLocalChats] = useState([]);
+
+  const updateChat = (uuid, message) => {
+    setLocalChats((chats) => {
+      const changedChat = { ...chats.find((chat) => chat.uuid === uuid) };
+      changedChat.timestamp = message.timestamp;
+      changedChat.last_message.message = message.body;
+      changedChat.last_message.user = message.author;
+
+      return [changedChat, ...chats.filter((chat) => chat.uuid !== uuid)];
+    });
+  };
 
   const contextData = {
-    chats,
-    setChats,
+    localChats,
+    setLocalChats,
+    updateChat,
   };
 
   return (

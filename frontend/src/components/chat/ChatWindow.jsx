@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useLayoutEffect } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 
+import { useChatsContext } from "../../context/ChatsContext";
+
 import useAuth from "../../hooks/useAuth";
 import useWebsocket from "../../hooks/chat/useWebsocket";
 import useEventListener from "../../hooks/useEventListener";
@@ -8,15 +10,16 @@ import useScrollToBottom from "../../hooks/layout/useScrollToBottom";
 
 import Input from "../forms/Input";
 import ErrorContainer from "../forms/ErrorContainer";
-import AuthorMessage from "./AuthorMessage";
-import OtherMessage from "./OtherMessage";
 import useEffectOnce from "./../../hooks/useEffectOnce";
+import ChatMessage from "./ChatMessage";
 
-const ChatWindow = () => {
+const ChatWindow = ({ showSidePanel }) => {
   const { uuid } = useParams();
   const { user } = useAuth();
-  const { showSidePanel } = useOutletContext();
+  const { localChats } = useChatsContext();
+  // const { showSidePanel } = useOutletContext();
   const [message, setMessage] = useState("");
+  const [currChat, setCurrChat] = useState(null);
   const { messages, sendMessage, fetchNewMessages, error, hasNext } =
     useWebsocket(user, uuid);
 
@@ -24,6 +27,19 @@ const ChatWindow = () => {
   const lastRef = useRef(null);
   const messageContainerRef = useRef(null);
   const scrollToBottom = useScrollToBottom(lastRef, messageContainerRef);
+
+  useEffectOnce(() => {
+    setCurrChat(localChats.find((chat) => chat.uuid === uuid));
+  }, [uuid, localChats]);
+
+  const chatName = useCallback(() => {
+    if (!currChat) return "Select Chat";
+
+    if (currChat.is_group_chat) return currChat.name;
+
+    const participant = currChat.participants.find((el) => el.id !== user.id);
+    return participant.username;
+  }, [currChat]);
 
   useEventListener("keydown", (e) => {
     if (e.key === "Enter") {
@@ -61,12 +77,6 @@ const ChatWindow = () => {
     [messages, hasNext]
   );
 
-  const msgType = (message) => {
-    if (user.id === message.author_id)
-      return <AuthorMessage message={message} />;
-    return <OtherMessage message={message} />;
-  };
-
   const getMsgRef = (idx) => {
     let ref = null;
     if (idx === 0) ref = firstMsgRef;
@@ -78,7 +88,7 @@ const ChatWindow = () => {
     if (!messages.length) return null;
     return messages.map((message, idx) => (
       <div ref={getMsgRef(idx)} key={message.id}>
-        {msgType(message)}
+        {<ChatMessage user={user} message={message} />}
       </div>
     ));
   };
@@ -86,7 +96,7 @@ const ChatWindow = () => {
   return (
     <div className="chat-window-container">
       <h2 className="chat-title text-center text-capitalize fg-white">
-        ChatWindow
+        {chatName()}
         <a className="btn-show-chats d-md-none" onClick={showSidePanel}>
           {"<<"}
         </a>
@@ -106,6 +116,7 @@ const ChatWindow = () => {
             paddingInline: "1em",
           }}
           as="textarea"
+          disabled={!uuid}
           ref={inputRef}
         />
       </div>

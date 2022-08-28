@@ -1,5 +1,7 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+
+import { useChatsContext } from "../../context/ChatsContext";
 
 import useAuth from "../../hooks/useAuth";
 import useAxiosFunction from "../../hooks/axios/useAxiosFunction";
@@ -16,7 +18,7 @@ import ErrorScreen from "../special_screens/ErrorScreen";
 
 const ChatSideBar = ({ hideSidePanel }) => {
   const { user } = useAuth();
-  const [localChats, setLocalChats] = useState([]);
+  const { localChats, setLocalChats } = useChatsContext();
   const nextChats = useRef();
 
   const privateChatModalRef = useRef();
@@ -82,13 +84,14 @@ const ChatSideBar = ({ hideSidePanel }) => {
                 <Link
                   ref={idx + 1 === localChats.length ? lastChatRef : null}
                   key={chat.uuid}
-                  to={`${chat.uuid}`}
+                  to={`/chat/${chat.uuid}`}
+                  replace={true}
                   onClick={hideSidePanel}>
                   <ChatThumbnail chat={chat} user={user} />
                 </Link>
               ))}
           </div>
-          <div className="chat-sidebar-buttons mb-3">
+          <div className="chat-sidebar-buttons my-3">
             <Button
               className="btn-chat btn-block mb-2"
               onClick={openPrivateChatModal}>

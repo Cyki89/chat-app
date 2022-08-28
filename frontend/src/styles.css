@@ -153,6 +153,11 @@ a:hover{
   max-width: 28em;
 }
 
+.form-control:disabled {
+  background-color: inherit;
+  opacity: 0.5;
+}
+
 .form.error {
   border: 2px solid var(--red-error) !important;
 }
@@ -370,6 +375,9 @@ a:hover{
 
 .message-info{
   color: var(--fg-secondary);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .message-info-title {

@@ -1,6 +1,6 @@
 const useScrollToBottom = (targetRef, containerRef) => {
   const scrollToBottom = () => {
-    console.log("scrol to bottom");
+    if (!targetRef.current) return;
     containerRef.current.scrollTop = targetRef.current.offsetTop;
   };
   return scrollToBottom;
