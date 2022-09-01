@@ -7,6 +7,7 @@ from channels.generic.websocket import WebsocketConsumer
 
 from .models import ChatRoom, Message
 
+
 MESSAGES_TO_FETCH = 10
 
 
@@ -39,24 +40,35 @@ class ChatRoomConsumer(WebsocketConsumer):
         payload = text_data_json['payload']
         
         if message_type == 'chat_message':    
-            message = Message.objects.create(
-                message=payload['message'],
-                user_id=payload['user_id'],
-                room=self.chat_room
-            )
-            ChatRoom.objects.filter(uuid=self.room_uuid)\
-                            .update(last_message=message, timestamp=datetime.now())
+            self.on_recive_chat_message(payload)
 
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {'type': 'chat_message', 'message': message.to_json()}
-            )
+        elif message_type == 'fetch_messages':
+            self.on_recive_fetch_messages(payload)
 
-        if message_type == 'fetch_messages':
-            async_to_sync(self.channel_layer.group_send)(
-                self.room_group_name,
-                {'type': 'fetch_messages', 'offset': payload['offset']}
-            )
+    def on_recive_chat_message(self, payload):  
+        message = Message.objects.create(
+            message=payload['message'],
+            user_id=payload['user_id'],
+            room=self.chat_room
+        )
+        
+        files = payload['files']
+        if files:
+            message.attachments.add(*[file['id'] for file in files])
+        
+        ChatRoom.objects.filter(uuid=self.room_uuid)\
+                        .update(last_message=message, timestamp=datetime.now())
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {'type': 'chat_message', 'message': message.to_json()}
+        )
+
+    def on_recive_fetch_messages(self, payload):  
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {'type': 'fetch_messages', 'offset': payload['offset']}
+        )
 
     def chat_message(self, event):
         self.send(text_data=json.dumps({

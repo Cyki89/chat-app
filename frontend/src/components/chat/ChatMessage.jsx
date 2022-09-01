@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+
 import Card from "react-bootstrap/Card";
 import Stack from "react-bootstrap/Stack";
 
 const ChatMessage = ({ user, message }) => {
   const user_is_author = user.id === message.author_id;
   const messageClass = user_is_author ? "message-author" : "message-other";
+  const alignClass = user_is_author ? "ml" : "mr";
 
   const MessageAvatar = (
     <img className="message-avatar" src={message.author_profile_image} alt="" />
@@ -11,10 +14,20 @@ const ChatMessage = ({ user, message }) => {
 
   const MessageBody = (
     <Card bg="dark" className="message-body bg-light-black my-2 p-2">
-      <div className="message-info mb-1">
-        {message.author} {message.timestamp}
+      <div className={`${alignClass}-auto mb-1`}>
+        <span className="message-info-title mr-2">{message.author}</span>
+        <span className="fg-primary">{message.timestamp}</span>
       </div>
-      <div>{message.body}</div>
+      <div className={`${alignClass}-auto fs-11`}>{message.body}</div>
+      <div className={`message-files ${alignClass}-auto`}>
+        {message.attachments.map((attachment) => (
+          <a
+            href={attachment.file_url}
+            className={`text-nowrap ${alignClass}-2`}>
+            {attachment.name}
+          </a>
+        ))}
+      </div>
     </Card>
   );
 

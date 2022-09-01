@@ -3,7 +3,7 @@ from django.http.response import FileResponse
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, RetrieveDestroyAPIView
 from rest_framework import parsers
 
 from .models import Image, ImageCollection
@@ -16,10 +16,11 @@ class UploadImageView(CreateAPIView):
     serializer_class = UploadImageSerializer
 
 
-class UserImagesView(APIView):
+class UserImagesView(RetrieveDestroyAPIView):
+    queryset = ImageCollection.objects.all()
+    lookup_field = 'user_id'
     def get(self, request, user_id):
-        collection = ImageCollection.objects.get(user_id=user_id)
-        return Response(collection.to_json())
+        return Response(self.get_object().to_json())
 
 
 def image_view(request, uuid):
@@ -27,9 +28,10 @@ def image_view(request, uuid):
     return FileResponse(open(image_obj.image.path, 'rb'), as_attachment=False)
 
 
-class ImageAPIView(RetrieveAPIView):
+class ImageAPIView(RetrieveDestroyAPIView):
     renderer_classes = [ImageRenderer]
+    queryset = Image.objects.all()
+    lookup_field = 'uuid'
 
     def get(self, request, *args, **kwargs):
-        image = Image.objects.get(uuid=self.kwargs['uuid']).image
-        return Response(image, content_type='image/jpg')
+        return Response(self.get_object().image, content_type='image/jpg')

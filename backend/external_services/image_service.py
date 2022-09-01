@@ -1,11 +1,6 @@
-import json
 import requests
-
-
 from rest_framework import status
 
-
-BASE_URL = "http://127.0.0.1:8001"
 BASE_URL = "http://images:8001"
 
 
@@ -23,3 +18,10 @@ def get_user_images(user_id):
     if response.status_code == status.HTTP_200_OK:
         res_data = response.json()
     return res_data
+
+
+def delete_user_images(user_id):
+    response = requests.delete(f"{BASE_URL}/images/collection/{user_id}")
+    if response.status_code == status.HTTP_204_NO_CONTENT:
+        return True
+    return False

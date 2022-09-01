@@ -15,11 +15,13 @@ import OnlyUnauthRoute from "../functional/OnlyUnauthRoute";
 
 import Chat from "./../chat/Chat";
 // import BlankChatWindow from "../chat/BlankChatWindow";
-// import ChatWindow from "../chat/ChatWindow";
+import ChatWindow from "../chat/ChatWindow";
 
 import Login from "../users/Login";
 import Logout from "../users/Logout";
 import Register from "../users/Register";
+
+import { ChatsProvider } from "../../context/ChatsContext";
 
 const Router = () => {
   return (
@@ -30,9 +32,24 @@ const Router = () => {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
           </Route>
+
           <Route path="chat" element={<ProtectedRoute />}>
-            <Route path="" element={<Chat />} />
-            <Route path=":uuid" element={<Chat />} />
+            <Route
+              path=""
+              element={
+                <ChatsProvider>
+                  <Chat />
+                </ChatsProvider>
+              }
+            />
+            <Route
+              path=":uuid"
+              element={
+                <ChatsProvider>
+                  <Chat />
+                </ChatsProvider>
+              }
+            />
           </Route>
           <Route path="" element={<Home />} />
           <Route path="authenticated" element={<Authenticated />} />

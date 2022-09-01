@@ -62,7 +62,7 @@ class RegisterView(CreateAPIView):
         login(request, user)
         
         return authenticated_user(user)    
-
+    
 
 @api_view(["GET"])
 def logout_view(request):

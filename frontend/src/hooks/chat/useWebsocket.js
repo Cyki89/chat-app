@@ -51,16 +51,16 @@ const useWebsocket = (user, uuid) => {
     webSocketRef.current.onerror = onError;
   }, [uuid]);
 
-  const sendMessage = (rawMessage) => {
+  const sendMessage = (rawMessage, files) => {
     const message = rawMessage.trim();
-    if (!message) return;
+    if (!message && !files.length) return;
 
-    // if (webSocketRef.current.readyState !== 1) return;
+    if (webSocketRef.current.readyState !== 1) return;
 
     webSocketRef.current.send(
       JSON.stringify({
         type: "chat_message",
-        payload: { message: message, user_id: user.id },
+        payload: { message: message, files, user_id: user.id },
       })
     );
 

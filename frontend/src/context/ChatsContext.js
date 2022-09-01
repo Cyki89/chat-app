@@ -1,9 +1,16 @@
 import { createContext, useState, useContext } from "react";
+import { useLocalStorage } from "../hooks/useStorage";
+import useAuth from "./../hooks/useAuth";
 
 const ChatsContext = createContext();
 
 export const ChatsProvider = ({ children }) => {
+  const { user } = useAuth();
   const [localChats, setLocalChats] = useState([]);
+  const [files, setFiles, resetFiles, removeFiles] = useLocalStorage(
+    `${user.id}:files`,
+    []
+  );
 
   const updateChat = (uuid, message) => {
     setLocalChats((chats) => {
@@ -20,6 +27,10 @@ export const ChatsProvider = ({ children }) => {
     localChats,
     setLocalChats,
     updateChat,
+    files,
+    setFiles,
+    resetFiles,
+    removeFiles,
   };
 
   return (

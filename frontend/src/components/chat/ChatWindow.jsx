@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useLayoutEffect } from "react";
-import { useParams, useOutletContext } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { useChatsContext } from "../../context/ChatsContext";
 
@@ -12,12 +12,12 @@ import Input from "../forms/Input";
 import ErrorContainer from "../forms/ErrorContainer";
 import useEffectOnce from "./../../hooks/useEffectOnce";
 import ChatMessage from "./ChatMessage";
+import FilesUploadContainer from "./FilesUploadContainer";
 
 const ChatWindow = ({ showSidePanel }) => {
   const { uuid } = useParams();
   const { user } = useAuth();
-  const { localChats } = useChatsContext();
-  // const { showSidePanel } = useOutletContext();
+  const { localChats, files, resetFiles } = useChatsContext();
   const [message, setMessage] = useState("");
   const [currChat, setCurrChat] = useState(null);
   const { messages, sendMessage, fetchNewMessages, error, hasNext } =
@@ -44,8 +44,12 @@ const ChatWindow = ({ showSidePanel }) => {
   useEventListener("keydown", (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      sendMessage(message);
-      if (!error) setMessage("");
+
+      sendMessage(message, files);
+      if (error) return;
+
+      setMessage("");
+      resetFiles();
     }
   });
 
@@ -106,6 +110,7 @@ const ChatWindow = ({ showSidePanel }) => {
         <div className="message-container-messages" ref={messageContainerRef}>
           {renderMessages()}
         </div>
+        <FilesUploadContainer />
         <Input
           title=""
           value={message}

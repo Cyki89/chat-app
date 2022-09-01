@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { ApiProvider } from "./context/ApiContext";
 import { AuthProvider } from "./context/AuthContext";
-import { ChatsProvider } from "./context/ChatsContext";
+// import { ChatsProvider } from "./context/ChatsContext";
 
 import Router from "./components/routes/Router";
 
@@ -15,9 +15,9 @@ function App() {
       <ToastContainer />
       <ApiProvider>
         <AuthProvider>
-          <ChatsProvider>
-            <Router />
-          </ChatsProvider>
+          {/* <ChatsProvider> */}
+          <Router />
+          {/* </ChatsProvider> */}
         </AuthProvider>
       </ApiProvider>
     </BrowserRouter>

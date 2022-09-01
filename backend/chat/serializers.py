@@ -1,7 +1,10 @@
+import json
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import ChatRoom, Message
+
+from external_services import file_service
+from .models import Attachment, ChatRoom, Message
 from .utils import timestamp_representation
 
 
@@ -69,5 +72,31 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         return rep
 
 
-class AttachementSerialzer(serializers.ModelSerializer):
-    ...
+class AttachmentsSerialzer(serializers.Serializer):
+    # files = serializers.ListField(child=serializers.FileField())
+    files = serializers.FileField()
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        files = validated_data.pop('files')
+
+        uploaded_files_ids = []
+        # for file in files:
+        if files:
+            file = files
+            attachement, created = Attachment.objects.get_or_create(user=user, name=file.name)
+            if created:
+                uploaded_file = file_service.upload_file(user.id, file)
+                attachement.file_url = uploaded_file['file_url']
+                attachement.save()
+            uploaded_files_ids.append(attachement.id)
+        return attachement
+
+    def to_representation(self, instance):
+        return instance.to_json()
+
+
+class AttachmentSimpleSerialzer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = ('id', 'user', 'file_url', 'messages')
