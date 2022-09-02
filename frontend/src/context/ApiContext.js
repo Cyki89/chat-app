@@ -1,8 +1,6 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useContext } from "react";
 
 const ApiContext = createContext();
-
-export default ApiContext;
 
 export const ApiProvider = ({ children }) => {
   const [apiAvailable, setApiAvailable] = useState(true);
@@ -15,4 +13,8 @@ export const ApiProvider = ({ children }) => {
   return (
     <ApiContext.Provider value={contextData}>{children}</ApiContext.Provider>
   );
+};
+
+export const useApi = () => {
+  return useContext(ApiContext);
 };

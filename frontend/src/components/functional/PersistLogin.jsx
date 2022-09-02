@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
-import useApi from "../../hooks/useApi";
-import useAuth from "../../hooks/useAuth";
-import useEffectOnce from "../../hooks/useEffectOnce";
+import { useAuth } from "../../context/AuthContext";
+import { useApi } from "../../context/ApiContext";
+import useEffectOnce from "../../hooks/utils/useEffectOnce";
 
 import LoadingScreen from "../special_screens/LoadingScreen";
 

@@ -1,4 +1,4 @@
-import useForm from "./../../hooks/useForm";
+import useForm from "./../../hooks/forms/useForm";
 
 import { default as BForm } from "react-bootstrap/Form";
 

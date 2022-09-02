@@ -3,7 +3,7 @@ import { useRef, useEffect } from "react";
 import { useChatsContext } from "../../context/ChatsContext";
 import useAxiosFunction from "../../hooks/axios/useAxiosFunction";
 import useAxiosPrivate from "../../hooks/axios/useAxiosPrivate";
-import useEventListener from "../../hooks/useEventListener";
+import useEventListener from "../../hooks/utils/useEventListener";
 
 import Stack from "react-bootstrap/Stack";
 import Button from "react-bootstrap/Button";
@@ -19,7 +19,7 @@ const FilesUploadContainer = () => {
   useEventListener(
     "click",
     (e) => {
-      orginalInputRef.current.click();
+      if (btnUploadRef.current) orginalInputRef.current.click();
     },
     btnUploadRef.current
   );
@@ -31,7 +31,7 @@ const FilesUploadContainer = () => {
       axiosInstance: axios,
       method: "post",
       url: "/chat/api/attachments/",
-      requestConfig: { files: e.target.files[0] },
+      requestConfig: { file: e.target.files[0] },
       requestExtraConfig: {
         headers: {
           "Content-Type": "multipart/form-data",

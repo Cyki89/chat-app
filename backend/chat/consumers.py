@@ -78,7 +78,12 @@ class ChatRoomConsumer(WebsocketConsumer):
 
     def fetch_messages(self, event):
         offset = event['offset']
-        messages = Message.objects.filter(room=self.chat_room)[offset: offset + MESSAGES_TO_FETCH]
+        messages = (
+            Message.objects.filter(room=self.chat_room)
+                           .prefetch_related('attachments')
+                           .select_related('user__profile')
+                            [offset: offset + MESSAGES_TO_FETCH]
+        )
         self.send(text_data=json.dumps({
             'type': 'fetch_messages',
             'messages': [message.to_json() for message in messages][::-1],

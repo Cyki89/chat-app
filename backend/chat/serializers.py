@@ -8,6 +8,24 @@ from .models import Attachment, ChatRoom, Message
 from .utils import timestamp_representation
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    json = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ('json', )
+
+    def get_json(self, instance):
+        return instance.to_json()
+
+
+
 class ChatUserSerializer(serializers.ModelSerializer):
     avatar = serializers.URLField(source='profile.image_url')
 
@@ -61,8 +79,20 @@ class ChatRoomSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 _('Private conversation have to have exacly 2 members')
             )
-        
+
         return participants
+
+    def create(self, validated_data):
+        if not validated_data['is_group_chat'] and (
+            chat_room := ChatRoom.objects
+                                .filter(is_group_chat=False)
+                                .filter(participants=validated_data['participants'][0])
+                                .filter(participants=validated_data['participants'][1])
+                                .first()
+        ):
+            return chat_room
+            
+        return super().create(validated_data)
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
@@ -73,23 +103,18 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
 
 class AttachmentsSerialzer(serializers.Serializer):
-    # files = serializers.ListField(child=serializers.FileField())
-    files = serializers.FileField()
+    file = serializers.FileField()
 
     def create(self, validated_data):
         user = self.context["request"].user
-        files = validated_data.pop('files')
+        file = validated_data.pop('file')
 
-        uploaded_files_ids = []
-        # for file in files:
-        if files:
-            file = files
-            attachement, created = Attachment.objects.get_or_create(user=user, name=file.name)
-            if created:
-                uploaded_file = file_service.upload_file(user.id, file)
-                attachement.file_url = uploaded_file['file_url']
-                attachement.save()
-            uploaded_files_ids.append(attachement.id)
+        attachement, created = Attachment.objects.get_or_create(user=user, name=file.name)
+        if created:
+            uploaded_file = file_service.upload_file(user.id, file)
+            attachement.file_url = uploaded_file['file_url']
+            attachement.save()
+        
         return attachement
 
     def to_representation(self, instance):

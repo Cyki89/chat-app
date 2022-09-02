@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 import { useChatsContext } from "../../context/ChatsContext";
 
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import useAxiosFunction from "../../hooks/axios/useAxiosFunction";
 import useAxiosPrivate from "./../../hooks/axios/useAxiosPrivate";
-import useEffectOnce from "./../../hooks/useEffectOnce";
+import useEffectOnce from "../../hooks/utils/useEffectOnce";
 
 import Button from "react-bootstrap/Button";
 
@@ -102,16 +102,8 @@ const ChatSideBar = ({ hideSidePanel }) => {
             </Button>
           </div>
         </div>
-        <PrivateChatModal
-          ref={privateChatModalRef}
-          user={user}
-          setLocalChats={setLocalChats}
-        />
-        <GroupChatModal
-          ref={groupChatModalRef}
-          user={user}
-          setLocalChats={setLocalChats}
-        />
+        <PrivateChatModal ref={privateChatModalRef} />
+        <GroupChatModal ref={groupChatModalRef} />
       </div>
     );
   };

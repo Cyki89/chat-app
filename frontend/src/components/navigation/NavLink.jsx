@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import useApi from "./../../hooks/useApi";
+import { useApi } from "../../context/ApiContext";
 
 const NavLink = ({ title, to }) => {
   const { apiAvailable } = useApi();

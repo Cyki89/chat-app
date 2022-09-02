@@ -1,6 +1,10 @@
 import { createContext, useState, useContext } from "react";
-import { useLocalStorage } from "../hooks/useStorage";
-import useAuth from "./../hooks/useAuth";
+import { useLocalStorage } from "../hooks/utils/useStorage";
+
+import axios from "../api/axios";
+import useAxios from "../hooks/axios/useAxios";
+import { useAuth } from "./AuthContext";
+import useEffectOnce from "../hooks/utils/useEffectOnce";
 
 const ChatsContext = createContext();
 
@@ -11,6 +15,16 @@ export const ChatsProvider = ({ children }) => {
     `${user.id}:files`,
     []
   );
+  const [chatUsers, setChatUsers] = useState([]);
+  const [response, error, loading] = useAxios({
+    axiosInstance: axios,
+    method: "GET",
+    url: "chat/api/users/",
+  });
+
+  useEffectOnce(() => {
+    if (response) setChatUsers(response);
+  }, [response]);
 
   const updateChat = (uuid, message) => {
     setLocalChats((chats) => {
@@ -27,6 +41,7 @@ export const ChatsProvider = ({ children }) => {
     localChats,
     setLocalChats,
     updateChat,
+    chatUsers,
     files,
     setFiles,
     resetFiles,

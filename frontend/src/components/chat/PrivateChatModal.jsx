@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
+import { useAuth } from "../../context/AuthContext";
+import { useChatsContext } from "../../context/ChatsContext";
+
 import useAxiosPrivate from "../../hooks/axios/useAxiosPrivate";
 import useAxiosFunction from "../../hooks/axios/useAxiosFunction";
 
@@ -11,18 +14,14 @@ import Select from "../forms/Select";
 import ServerErrors from "../forms/ServerErrors";
 import SubmitButton from "../forms/SubmitButton";
 
-const PrivateChatModal = ({ user, setLocalChats }, ref) => {
+const PrivateChatModal = ({}, ref) => {
+  const { user } = useAuth();
+  const { localChats, setLocalChats, chatUsers } = useChatsContext();
+
   const [show, setShow] = useState(false);
   const [memberId, setMemberId] = useState(0);
 
   const navigate = useNavigate();
-  const [options, setOptions] = useState(() => [
-    { id: 1, username: "user1" },
-    { id: 2, username: "user2" },
-    { id: 3, username: "user3" },
-    { id: 4, username: "user4" },
-    { id: 5, username: "user5" },
-  ]);
 
   const axiosPrivate = useAxiosPrivate();
   const [response, error, loading, axiosFetch] = useAxiosFunction();
@@ -42,6 +41,7 @@ const PrivateChatModal = ({ user, setLocalChats }, ref) => {
       method: "POST",
       url: "/chat/api/",
       requestConfig: {
+        is_group_chat: false,
         participants: [user.id, memberId],
       },
     });
@@ -50,7 +50,9 @@ const PrivateChatModal = ({ user, setLocalChats }, ref) => {
   useEffect(() => {
     if (!response) return;
 
-    setLocalChats((prev) => [response, ...prev]);
+    if (localChats.every((chat) => chat.uuid !== response.uuid)) {
+      setLocalChats((prev) => [response, ...prev]);
+    }
     setMemberId(0);
     setShow(false);
     navigate(`/chat/${response.uuid}`);
@@ -68,12 +70,12 @@ const PrivateChatModal = ({ user, setLocalChats }, ref) => {
       <Form onSubmit={handleSubmit}>
         <Modal.Body className="fs-11">
           <Select
-            title="Select Useer"
+            title="Select User"
             value={memberId}
             setValue={(e) => {
               setMemberId(e.target.value);
             }}
-            options={options}
+            options={chatUsers}
             optionName="username"
             error={error.response?.data?.participants}
           />

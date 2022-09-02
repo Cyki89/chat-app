@@ -14,8 +14,6 @@ import ProtectedRoute from "../functional/ProtectedRoute";
 import OnlyUnauthRoute from "../functional/OnlyUnauthRoute";
 
 import Chat from "./../chat/Chat";
-// import BlankChatWindow from "../chat/BlankChatWindow";
-import ChatWindow from "../chat/ChatWindow";
 
 import Login from "../users/Login";
 import Logout from "../users/Logout";

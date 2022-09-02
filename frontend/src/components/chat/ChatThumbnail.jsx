@@ -33,10 +33,12 @@ const ChatThumbnail = ({ chat, user }) => {
           <div className="message-info-title">{chatName()}</div>
           <div>{chat.timestamp}</div>
         </div>
-        <div className="fs-11 chat-last-message">
-          <span className="fw-bold">{lastMessageAuthor()}: </span>
-          {chat.last_message.message}
-        </div>
+        {chat.last_message.message && (
+          <div className="fs-11 chat-last-message">
+            <span className="fw-bold">{lastMessageAuthor()}: </span>
+            {chat.last_message.message}
+          </div>
+        )}
       </Card>
     </Stack>
   );

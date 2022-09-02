@@ -1,12 +1,25 @@
+from django.contrib.auth.models import User
+
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import CreateAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import parsers, status
 
 from .models import Message, Attachment
-from .serializers import ChatRoomSerializer, AttachmentsSerialzer, AttachmentSimpleSerialzer
+from .serializers import ChatRoomSerializer, AttachmentsSerialzer, UserSerializer, MessageSerializer
 from .paginations import ChatCursorPagination
+
+
+
+class UserListView(ListAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.filter(is_staff=False)
+
+
+class MessageListView(ListAPIView):
+    serializer_class = MessageSerializer
+    queryset = Message.objects.prefetch_related('attachments').select_related('user__profile')
 
 
 class ChatRoomViewSet(ModelViewSet):

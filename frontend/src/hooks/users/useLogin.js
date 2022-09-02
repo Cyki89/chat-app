@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import axios from "../../api/axios";
-
-import useAuth from "../useAuth";
 import useAxiosFunction from "../axios/useAxiosFunction";
+import { useAuth } from "../../context/AuthContext";
 
 const useLogin = () => {
   const [response, error, loading, axiosFetch] = useAxiosFunction();

@@ -3,8 +3,8 @@ import { Navigate } from "react-router-dom";
 
 import { axiosPrivate } from "../../api/axios";
 
-import useApi from "../../hooks/useApi";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
+import { useApi } from "../../context/ApiContext";
 import useAxios from "../../hooks/axios/useAxios";
 
 import LoadingScreen from "../special_screens/LoadingScreen";

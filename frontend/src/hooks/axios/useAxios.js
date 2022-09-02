@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import useApi from "../useApi";
-import useEffectOnce from "../useEffectOnce";
+import { useApi } from "../../context/ApiContext";
+import useEffectOnce from "../utils/useEffectOnce";
 
 const useAxios = (configObj) => {
   const { setApiAvailable } = useApi();

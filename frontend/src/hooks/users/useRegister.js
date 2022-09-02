@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "../../api/axios";
 
-import useAuth from "../useAuth";
+import { useAuth } from "../../context/AuthContext";
 import useAxiosFunction from "../axios/useAxiosFunction";
 
 import { showSuccessNotification } from "../../utils/notifications";

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-import useApi from "../../hooks/useApi";
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
+import { useApi } from "../../context/ApiContext";
 
 const OnlyUnauthRoute = () => {
   const { apiAvailable } = useApi();

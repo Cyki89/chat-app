@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-import useMediaQuery from "../../hooks/useMediaQuery";
-import useEffectOnce from "./../../hooks/useEffectOnce";
+import useMediaQuery from "../../hooks/layout/useMediaQuery";
+import useEffectOnce from "../../hooks/utils/useEffectOnce";
 
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";

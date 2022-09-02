@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 
 import { useChatsContext } from "../../context/ChatsContext";
 
-import useAuth from "../../hooks/useAuth";
+import { useAuth } from "../../context/AuthContext";
 import useWebsocket from "../../hooks/chat/useWebsocket";
-import useEventListener from "../../hooks/useEventListener";
+import useEventListener from "../../hooks/utils/useEventListener";
 import useScrollToBottom from "../../hooks/layout/useScrollToBottom";
 
 import Input from "../forms/Input";
 import ErrorContainer from "../forms/ErrorContainer";
-import useEffectOnce from "./../../hooks/useEffectOnce";
+import useEffectOnce from "../../hooks/utils/useEffectOnce";
 import ChatMessage from "./ChatMessage";
 import FilesUploadContainer from "./FilesUploadContainer";
 
@@ -110,20 +110,22 @@ const ChatWindow = ({ showSidePanel }) => {
         <div className="message-container-messages" ref={messageContainerRef}>
           {renderMessages()}
         </div>
-        <FilesUploadContainer />
-        <Input
-          title=""
-          value={message}
-          setValue={(e) => setMessage(e.target.value)}
-          placeholder="Enter message"
-          style={{
-            width: "100%",
-            paddingInline: "1em",
-          }}
-          as="textarea"
-          disabled={!uuid}
-          ref={inputRef}
-        />
+        <div>
+          <FilesUploadContainer />
+          <Input
+            title=""
+            value={message}
+            setValue={(e) => setMessage(e.target.value)}
+            placeholder="Enter message"
+            style={{
+              width: "100%",
+              paddingInline: "1em",
+            }}
+            as="textarea"
+            disabled={!uuid}
+            ref={inputRef}
+          />
+        </div>
       </div>
     </div>
   );

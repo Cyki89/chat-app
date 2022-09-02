@@ -87,3 +87,4 @@ def get_user_if_authenticated(request):
 def get_user_image(request, user_id):
     profile = get_object_or_404(Profile, user_id=user_id)
     return Response({'image_url': profile.image_url})
+

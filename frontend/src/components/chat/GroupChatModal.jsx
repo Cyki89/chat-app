@@ -1,6 +1,9 @@
 import { forwardRef, useImperativeHandle, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../../context/AuthContext";
+import { useChatsContext } from "../../context/ChatsContext";
+
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 
@@ -12,19 +15,15 @@ import MultiSelect from "../forms/MultiSelect";
 import ServerErrors from "../forms/ServerErrors";
 import SubmitButton from "../forms/SubmitButton";
 
-const GroupChatModal = ({ user, setLocalChats }, ref) => {
+const GroupChatModal = ({}, ref) => {
+  const { user } = useAuth();
+  const { setLocalChats, chatUsers } = useChatsContext();
+
   const [show, setShow] = useState(false);
   const [name, setName] = useState("");
   const [participants, setParticipants] = useState();
 
   const navigate = useNavigate();
-  const [options, setOptions] = useState(() => [
-    { id: 1, username: "user1" },
-    { id: 2, username: "user2" },
-    { id: 3, username: "user3" },
-    { id: 4, username: "user4" },
-    { id: 5, username: "user5" },
-  ]);
 
   const axiosPrivate = useAxiosPrivate();
   const [response, error, loading, axiosFetch] = useAxiosFunction();
@@ -77,7 +76,7 @@ const GroupChatModal = ({ user, setLocalChats }, ref) => {
           <MultiSelect
             title="Add User"
             setValue={setParticipants}
-            options={options}
+            options={chatUsers}
             optionName="username"
             error={error.response?.data?.participants}
           />

@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 
 import { useChatsContext } from "../../context/ChatsContext";
-import useEffectOnce from "../useEffectOnce";
+import useEffectOnce from "../utils/useEffectOnce";
 
 const SERVER_HOST = "127.0.0.1:8000";
 

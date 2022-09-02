@@ -1,6 +1,7 @@
 import { useEffect } from "react";
+
+import { useAuth } from "../../context/AuthContext";
 import { axiosPrivate } from "../../api/axios";
-import useAuth from "../useAuth";
 
 const useAxiosPrivate = () => {
   const { csrf } = useAuth();

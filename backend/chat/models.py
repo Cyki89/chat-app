@@ -12,21 +12,19 @@ class ChatRoom(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=255, blank=True, null=True)
     
-    # TODO Add Unique constraint for manyToMany
     participants = models.ManyToManyField(User, related_name='chats')
     
-    # TODO set last message on delete event
     last_message = models.ForeignKey(
         to='Message', 
         null=True, 
         blank=True,
         related_name='+',
-        on_delete=models.PROTECT
+        on_delete=models.CASCADE
     )
     is_group_chat = models.BooleanField(default=False)
 
-    # class Meta:
-    #     ordering = ("-timestamp", )
+    class Meta:
+        ordering = ("-timestamp", )
 
 
 class Attachment(models.Model):
